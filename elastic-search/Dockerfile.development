@@ -1,0 +1,20 @@
+FROM node:20.15.1 as base
+LABEL authors="truong.do"
+
+WORKDIR /usr/src/app
+COPY package.json ./package.json
+COPY yarn.lock ./yarn.lock
+
+FROM base as build-stage
+
+WORKDIR /usr/src/app
+RUN npm install
+
+FROM build-stage as app
+
+WORKDIR /usr/src/app
+COPY . .
+
+EXPOSE 3000
+
+ENTRYPOINT ["yarn", "start"]

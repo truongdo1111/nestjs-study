@@ -1,0 +1,33 @@
+version: "3.0"
+
+services:
+  elastic-search:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+    env_file:
+      - .env.build
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD-hashPasWord1}
+    ports:
+      - "9200:9200"
+    networks:
+      - app-network
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "3001:3000"
+    networks:
+      - app-network
+
+  db:
+    image: postgres:16
+    networks:
+      - app-network
+
+networks:
+  app-network:
